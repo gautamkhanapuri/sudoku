@@ -282,9 +282,7 @@
 				<li><span id="stopguess" onclick="stopGuess()">Stop</span></li>
 			</ul>
 		</div>
-		<h2>
-			Suduko Puzzles
-		</h2>
+		<h2>Suduko Puzzles</h2>
 		<div class="input-container">
 			<input type="text" id="inpuzzle" placeholder="Sudoku as 012000034100...">
 			<button id="loadButton" onclick="handleLoad()">Load</button>
@@ -304,35 +302,35 @@
 			static gravity = 0.006;
 			static friction = 1;
 			constructor(x, y, radius, color, velocity) {
-				this.x = x
-				this.y = y
-				this.radius = radius
-				this.color = color
-				this.velocity = velocity
-				this.alpha = 1 // alpha = opacity
+				this.x = x;
+				this.y = y;
+				this.radius = radius;
+				this.color = color;
+				this.velocity = velocity;
+				this.alpha = 1 // alpha = opacity;
 			}
 			draw() {
-				canvasContext.save()
-				canvasContext.globalAlpha = this.alpha
-				canvasContext.beginPath()
-				canvasContext.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-				canvasContext.fillStyle = this.color
-				canvasContext.fill()
-				canvasContext.closePath()
-				canvasContext.restore()
+				canvasContext.save();
+				canvasContext.globalAlpha = this.alpha;
+				canvasContext.beginPath();
+				canvasContext.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+				canvasContext.fillStyle = this.color;
+				canvasContext.fill();
+				canvasContext.closePath();
+				canvasContext.restore();
 			}
 			update() {
-				this.draw()
-				this.velocity.x *= Spinner.friction
-				this.velocity.x *= Spinner.friction
-				this.velocity.y += Spinner.gravity
-				this.x += this.velocity.x
-				this.y += this.velocity.y
+				this.draw();
+				this.velocity.x *= Spinner.friction;
+				this.velocity.x *= Spinner.friction;
+				this.velocity.y += Spinner.gravity;
+				this.x += this.velocity.x;
+				this.y += this.velocity.y;
 			}
 		}
 
 		function puzzleOverInit() {
-			spinners = []
+			spinners = [];
 		}
 
 		function puzzleOverAnimate() {
@@ -352,7 +350,7 @@
 			canvas = document.querySelector('canvas');
 			canvas.style.display = 'block';
 			canvas.classList.remove('hidden');
-			canvasContext = canvas.getContext('2d'); // c within canvas is always context
+			canvasContext = canvas.getContext('2d'); // context within canvas
 			canvas.width = window.innerWidth;
 			canvas.height = window.innerHeight;
 			canvas.setAttribute('tabindex', '0'); // Make it focusable for keypress
@@ -379,7 +377,7 @@
 			});
 		}
 
-		function 	puzzleOverStopAnimate(ev) {
+		function puzzleOverStopAnimate(ev) {
 			cancelAnimationFrame(animationId);
 			canvas.classList.add('hidden');
 			setTimeout(() => {
@@ -420,7 +418,7 @@
 				board[obj.dataset.row][obj.dataset.col] = 0;
 			}
 			document.getElementById("outputshow").innerText = "";
-      solvedCnt = 0;
+			solvedCnt = 0;
 		}
 
 		function handleLoad() {
@@ -435,7 +433,7 @@
 		}
 
 		function generateBoard(input) {
-  		solvedCnt = 0;
+			solvedCnt = 0;
 			let vals = input.split("");
 			let numericReg = /^[1-9]$/;
 			for (let i = 1; i < cnt; i++) {
@@ -447,7 +445,7 @@
 					obj.readOnly = true;
 					obj.style.color = 'blue';
 					board[obj.dataset.row][obj.dataset.col] = vals[idx];
-          solvedCnt += 1;
+					solvedCnt += 1;
 				} else {
 					obj.value = "";
 					obj.readOnly = false;
@@ -491,92 +489,92 @@
 		}
 
 		function reader() {
-      for (let i = 1; i < cnt; i++) {
-      	let objid = "at" + i;
-        let obj = document.getElementById(objid);
-        if (obj.value != "")
-          board[obj.dataset.row][obj.dataset.col] = obj.value;
-        else
-          board[obj.dataset.row][obj.dataset.col] = 0;
-      }
-      let newprom = new Promise((resolve, reject) => {
-        let ans = solveNow();
-        if (ans) {
-          resolve();
-        } else {
-          console.log("Error in the solution");
-          reject();
-        }
-      });
-      newprom.then(() => {
-        afterSolve();
-        linePrinter(true);
-      }).catch(() => {
-        console.log("Error in the solution");
-        linePrinter(false);
-      });
+			for (let i = 1; i < cnt; i++) {
+				let objid = "at" + i;
+				let obj = document.getElementById(objid);
+				if (obj.value != "")
+					board[obj.dataset.row][obj.dataset.col] = obj.value;
+				else
+					board[obj.dataset.row][obj.dataset.col] = 0;
+			}
+			let newprom = new Promise((resolve, reject) => {
+				let ans = solveNow();
+				if (ans) {
+					resolve();
+				} else {
+					console.log("Error in the solution");
+					reject();
+				}
+			});
+			newprom.then(() => {
+				afterSolve();
+				linePrinter(true);
+			}).catch(() => {
+				console.log("Error in the solution");
+				linePrinter(false);
+			});
 		}
 
-    function linePrinter(argument) {
-      if (argument) {
-        document.getElementById("outputshow").innerText = "Puzzle solved successfully.";
-        document.getElementById("outputshow").style.color = "Black";
-      } else {
-        document.getElementById("outputshow").innerText = "Error: Recheck the values";
-        document.getElementById("outputshow").style.color = "Red";
-      }
-    }
+		function linePrinter(argument) {
+			if (argument) {
+				document.getElementById("outputshow").innerText = "Puzzle solved successfully.";
+				document.getElementById("outputshow").style.color = "Black";
+			} else {
+				document.getElementById("outputshow").innerText = "Error: Recheck the values";
+				document.getElementById("outputshow").style.color = "Red";
+			}
+		}
 
-    function solveNow() {
-      for (let i = 0; i < 9; i++) {
-        for (let j = 0; j < 9; j++) {
-          if (board[i][j] == 0) {
-            for (let val = 1; val <= 9; val++) {
-              if(checker(i,j,val)){
-                board[i][j]=val;
-                let nextsol=solveNow();
-                if(!nextsol){
-                  board[i][j]=0;
-                } else{
-                  return true;
-                }
-              }
-            }
-            return false;
-          }
-        }
-      }
-      return true;
-    }
+		function solveNow() {
+			for (let i = 0; i < 9; i++) {
+				for (let j = 0; j < 9; j++) {
+					if (board[i][j] == 0) {
+						for (let val = 1; val <= 9; val++) {
+							if(checker(i,j,val)){
+								board[i][j]=val;
+								let nextsol=solveNow();
+								if(!nextsol){
+									board[i][j]=0;
+								} else{
+									return true;
+								}
+							}
+						}
+						return false;
+					}
+				}
+			}
+			return true;
+		}
 
-    function checker(row, col, val) {
-      for (let i = 0; i < 9; i++) {
-        if (board[row][i] == val)
-          return false;
-        if (board[i][col] == val)
-          return false;
-        irow = 3 * Math.floor(row / 3) + Math.floor(i / 3);
+		function checker(row, col, val) {
+			for (let i = 0; i < 9; i++) {
+				if (board[row][i] == val)
+					return false;
+				if (board[i][col] == val)
+					return false;
+				irow = 3 * Math.floor(row / 3) + Math.floor(i / 3);
 				icol = 3 * Math.floor(col / 3) + (i % 3);
-        if (board[irow][icol] == val)
-          return false;
-      }
-      return true;
-    }
+				if (board[irow][icol] == val)
+					return false;
+			}
+			return true;
+		}
 
-    function afterSolve() {
-      for (let i = 1; i < cnt; i++) {
-      	let objid = "at" + i;
-        let obj = document.getElementById(objid);
-        obj.value = board[obj.dataset.row][obj.dataset.col];
-      }
-      solvedCnt = cnt-1;
+		function afterSolve() {
+			for (let i = 1; i < cnt; i++) {
+				let objid = "at" + i;
+				let obj = document.getElementById(objid);
+				obj.value = board[obj.dataset.row][obj.dataset.col];
+			}
+			solvedCnt = cnt-1;
 			guess = 0;
 			guessList.clear();
 			const cells = document.querySelectorAll('input.elem');
 			cells.forEach(cell => {
 				cell.readOnly = true;
 			});
-    }
+		}
 
 		function boardState(){
 			let fnl = '';
@@ -596,10 +594,10 @@
 		}
 
 		function randPerm(n) {
-    	const arr = Array.from({length: n}, (_, i) => i+1); // array from 1 to n
+			const arr = Array.from({length: n}, (_, i) => i+1); // array from 1 to n
 			for (let i = n - 1; i > 0; i--) { // Shuffle the array
 				const j = Math.floor(Math.random() * (i + 1));
-				[arr[i], arr[j]] = [arr[j], arr[i]];
+				[arr[i], arr[j]] = [arr[j], arr[i]]; //Swap
 			}
 			return arr;
 		}
@@ -634,11 +632,11 @@
 		}
 
 		function resetBoard() {
-  		for (let i = 0; i < 9; i++) {
-    		for(let j=0; j<9; j++){
-      		board[i][j] = 0;
-    		}
-  		}
+			for (let i = 0; i < 9; i++) {
+				for(let j=0; j<9; j++){
+					board[i][j] = 0;
+				}
+			}
 		}
 
 		function loadBoard(s) {
@@ -851,8 +849,8 @@
 		let cnt = 1;
 		let solvedCnt = 0;
 		let hintCount = 52;
-    let guess = 0;
-    const guessList = new Map();
+		let guess = 0;
+		const guessList = new Map();
 		let currentTooltip = null;
 		let board = new Array(9);
 		for (let i = 0; i < 9; i++) {
