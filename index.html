@@ -137,33 +137,9 @@
 				}
 			}
 
-			.context-menu {
-				position: absolute;
-				text-align: center;
-				background: lightgray;
-				border: 1px solid black;
-			}
-			.context-menu ul {
-				padding: 0px;
-				margin: 0px;
-				min-width: 150px;
-				list-style: none;
-			}
-			.context-menu ul li {
-				padding-bottom: 7px;
-				padding-top: 7px;
-				border: 1px solid black;
-			}
-			.context-menu ul li span {
-				text-decoration: none;
-				color: black;
-			}
-			.context-menu ul li:hover {
-				background: darkgray;
-			}
 			.greyed-out {
-				color: grey; /* Or a specific grey color like #ccc */
-				opacity: 0.6; /* Reduce opacity for a faded look */
+				background-color: grey; /* Or a specific grey color like #ccc */
+				/*opacity: 0.6;*/ /* Reduce opacity for a faded look */
 				pointer-events: none; /* Disable click events */
 			}
 
@@ -189,7 +165,7 @@
 				text-align: center;
 			}
 			.table {
-				margin-top: 4vh;
+				margin-top: 2vh;
 				display: grid;
 				grid-template-columns: 162px 162px 162px;
 				grid-template-rows: 162px 162px 162px;
@@ -204,22 +180,23 @@
 			}
 			.elem {
 				border: solid 1px black;
-				font-size: 40px;
+				font-size: 30px;
 			}
 			.common {
 				display: flex;
 				justify-content: center;
-				gap: 20px; 
+				column-gap: 20px;
 			}
 			.btn {
-				margin-top: 3vh;
+				margin-top: 1vh;
 				width: 150px;
-				height: 40px;
+				height: 30px;
 				justify-content: center;
 				padding-top: 10px;
 				background-color: #007bff;
 				color: white;
 				font-size: large;
+				font-weight: bold;
 				border-radius: 10%;
 				transition: all 0.5s ease-out;
 			}
@@ -230,13 +207,37 @@
 			.btn:active {
 				scale: 0.9;
 			}
-			#outputshow {
-				font-size: x-large;
-				color: black;
+			.mainheading {
+				margin-top: 3vh;
+				margin-bottom: 1vh;
+				font-size: 20px;
+				font-weight: bold;
+				color: white;
 			}
-			.input-container {
+			#outputshow {
+				margin: 1vh;
+				font-size: 15px;
+				font-weight: bold;
+				color: white;
+			}
+			.input-container-puzzle {
 				width: 50vw; /* 50% of viewport width */
 				margin: 0 auto; /* Centers the div horizontally */
+				display: flex; /* Enables flexbox for aligning input and button */
+				justify-content: center; /* Centers items horizontally within the flex container */
+				align-items: center; /* Centers items vertically within the flex container */
+				gap: 5px;
+			}
+			.input-container-outside {
+				width: 50vw; /* 50% of viewport width */
+				margin: 0 auto; /* Centers the div horizontally */
+				display: flex; /* Enables flexbox for aligning input and button */
+				justify-content: center; /* Centers items horizontally within the flex container */
+				align-items: center; /* Centers items vertically within the flex container */
+				gap: 20px;
+			}
+			.input-container {
+				margin-top: 1vh;
 				display: flex; /* Enables flexbox for aligning input and button */
 				justify-content: center; /* Centers items horizontally within the flex container */
 				align-items: center; /* Centers items vertically within the flex container */
@@ -250,6 +251,7 @@
 				box-sizing: border-box;
 				font-size: 15px;
 			}
+			#guessClear,
 			#loadButton,
 			#clearButton {
 				padding: 10px 15px;
@@ -257,6 +259,15 @@
 				color: white;
 				border: none;
 				cursor: pointer;
+				font-size: 15px;
+				font-weight: bold;
+			}
+			.hint,
+			.guess {
+				margin: 1vh;
+				color: white;
+				font-size: 15px;
+				font-weight: bold;
 			}
 		</style>
 	</head>
@@ -275,20 +286,30 @@
 				<li><span>9</span></li>
 			</ul>
 		</div >
-		<div id="contextMenu" class="context-menu" style="display:none">
-			<ul>
-				<li><span id="startguess" onclick="startGuess()">Guess</span></li>
-				<li><span id="clearguess" onclick="clearGuess()">Clear</span></li>
-				<li><span id="stopguess" onclick="stopGuess()">Stop</span></li>
-			</ul>
-		</div>
-		<h2>Suduko Puzzles</h2>
-		<div class="input-container">
+		<p class="mainheading">Suduko Puzzles</p>
+		<div class="input-container-puzzle">
 			<input type="text" id="inpuzzle" placeholder="Sudoku as 012000034100...">
 			<button id="loadButton" onclick="handleLoad()">Load</button>
 			<button id="clearButton" onclick="clearInput()">Clear</button>
 		</div>
-		<h3 id="outputshow"></h3>
+		<div class="input-container-outside">
+		<div class="input-container">
+			<span class="guess"><u>Guess:</u></span>
+			<label class="guess"><input type="radio" name="guess" value="true">Enable</label>
+			<label class="guess"><input type="radio" name="guess" value="false" checked>Disable</label>
+			<button id="guessClear">Clear</button>
+		</div>
+		<div class="input-container">
+			<span class="guess"><u>Hint:</u></span>
+			<label class="hint"><input type="radio" name="hint" value="true" checked>Enable</label>
+			<label class="hint"><input type="radio" name="hint" value="false">Disable</label>
+		</div>
+		<div class="input-container">
+			<span class="guess"><u>Difficulty:</u></span>
+			<input type="number" id="hintcount" min="4" max="52" value="45">
+		</div>
+		</div>
+		<p id="outputshow">New Puzzle</p>
 		<div id="tbl" class="table"></div>
 		<div class="common">
 			<div class="btn" onclick="reader()">Solve</div>
@@ -356,8 +377,9 @@
 			canvas.setAttribute('tabindex', '0'); // Make it focusable for keypress
 			canvas.focus(); // Set focus
 			puzzleOverInit();
+			handleMouseoutEvent();
 			puzzleOverAnimate();
-			const particleCount = 200;
+			const particleCount = 400;
 			const angleIncrement = (Math.PI * 2) / particleCount;
 			for (let i = 0; i < particleCount; i++) {
 				spinners.push(
@@ -399,8 +421,20 @@
 			let puzzle = generate(res.result, hintCount);
 			// console.log("Generated: " + puzzle);
 			generateBoard(puzzle);
-			document.getElementById("outputshow").innerText = "";
+			document.getElementById("outputshow").innerText = "New Puzzle";
 			document.getElementById('inpuzzle').value = puzzle;
+			const radioButtons = document.getElementsByName("guess");
+			for (let i = 0; i < radioButtons.length; i++) {
+				if (radioButtons[i].value === "false") {
+					radioButtons[i].checked = true;
+					break; // Stop after finding and checking the desired radio button
+				}
+			}
+			let btn = document.getElementById('guessClear')
+			btn.style.backgroundColor = 'grey';
+			btn.classList.add('greyed-out');
+			guess = 0;
+			guessList.clear();
 		}
 
 		function reset() {
@@ -417,7 +451,7 @@
 				obj.style.color = 'black';
 				board[obj.dataset.row][obj.dataset.col] = 0;
 			}
-			document.getElementById("outputshow").innerText = "";
+			document.getElementById("outputshow").innerText = "Start a New Puzzle";
 			solvedCnt = 0;
 		}
 
@@ -428,7 +462,7 @@
 				alert('Length should be 81 chars: ' + input.value);
 			else {
 				generateBoard(input.value);
-				document.getElementById("outputshow").innerText = "";
+				document.getElementById("outputshow").innerText = "New Puzzle";
 			}
 		}
 
@@ -476,8 +510,10 @@
 						newCell.dataset.col = col;
 						newCell.autocomplete="off";
 						if (grp % 2 == 0)
-							newCell.style.backgroundColor = "antiquewhite";
-							// newCell.style.backgroundColor = "lightblue";
+							//newCell.style.backgroundColor = "antiquewhite";
+							newCell.style.backgroundColor = "lightblue";
+						newCell.setAttribute('type', 'text');
+						newCell.setAttribute('pattern', '[0-9]*');
 						newCell.setAttribute('inputmode', 'numeric');
 						newCell.setAttribute('maxlength', "1");
 						cell.appendChild(newCell);
@@ -518,7 +554,7 @@
 		function linePrinter(argument) {
 			if (argument) {
 				document.getElementById("outputshow").innerText = "Puzzle solved successfully.";
-				document.getElementById("outputshow").style.color = "Black";
+				// document.getElementById("outputshow").style.color = "Black";
 			} else {
 				document.getElementById("outputshow").innerText = "Error: Recheck the values";
 				document.getElementById("outputshow").style.color = "Red";
@@ -743,43 +779,6 @@
 			// console.log("Solved: " + solvedCnt);
 		}
 
-		function hideMenu() {
-			document.getElementById("contextMenu").style.display = "none"
-		}
-
-		function rightClick(e) {
-			e.preventDefault();
-			if (document.getElementById("contextMenu").style.display == "block")
-				hideMenu();
-			else {
-				let menu = document.getElementById("contextMenu")
-				menu.style.display = 'block';
-				menu.style.left = e.pageX + "px";
-				menu.style.top = e.pageY + "px";
-				if (guess == 1) {
-					document.getElementById('startguess').classList.add('greyed-out');
-					document.getElementById('clearguess').classList.remove('greyed-out');
-					document.getElementById('stopguess').classList.remove('greyed-out');
-				} else {
-					document.getElementById('startguess').classList.remove('greyed-out');
-					document.getElementById('clearguess').classList.add('greyed-out');
-					document.getElementById('stopguess').classList.add('greyed-out');
-				}
-			}
-		}
-
-		function startGuess(e) {
-			guess += 1;
-			guessList.set('' + guess, new Array());
-			console.log("Start Guessing...");
-		}
-
-		function stopGuess(e) {
-			guessList.delete('' + guess);
-			guess -= 1;
-			console.log("Stop Guessing...");
-		}
-
 		function clearGuess(e) {
 			console.log("Clear Guesses...");
 			guessList.forEach((gList, gId) => {
@@ -794,6 +793,8 @@
 		}
 
 		function handleMouseoutEvent() {
+			if (!showHint)
+				return;
 			if (currentTooltip) {
 				currentTooltip.classList.remove('show');
 				if (currentTooltip && currentTooltip.parentNode) {
@@ -804,6 +805,8 @@
 		}
 
 		function handleMouseOverEvent(event) {
+			if (!showHint)
+				return;
 			if (currentTooltip) { // Remove any existing tooltip
 				currentTooltip.remove();
 			}
@@ -840,16 +843,49 @@
 				cell.addEventListener('mouseover', handleMouseOverEvent);
 				cell.addEventListener('mouseout', handleMouseoutEvent);
 			});
-			// https://www.geeksforgeeks.org/javascript/how-to-add-a-custom-right-click-menu-to-a-webpage/
-			document.onclick = hideMenu;
-			document.oncontextmenu = rightClick;
 			generateNew();
+
+			const guessRadios = document.querySelectorAll('input[name="guess"]');
+			guessRadios.forEach(radio => {
+				radio.addEventListener('change', function() {
+					let currentGuess = (this.value == "true") ? 1 : 0;
+					const button = document.getElementById('guessClear');
+					if (currentGuess) {
+						button.disabled = false;
+						button.classList.remove('greyed-out');
+						button.style.backgroundColor = '#007bff';
+						guessList.set('' + currentGuess, new Array());
+						button.addEventListener('click', clearGuess);
+					} else {
+						button.removeEventListener('click', clearGuess);
+						button.disabled = true;
+						guessList.delete('' + currentGuess);
+						button.classList.add('greyed-out');
+						button.style.backgroundColor = 'grey';
+					}
+					guess = currentGuess;
+				});
+			});
+			let btn = document.getElementById('guessClear')
+			btn.style.backgroundColor = 'grey';
+			btn.classList.add('greyed-out');
+			const hintRadios = document.querySelectorAll('input[name="hint"]');
+			hintRadios.forEach(radio => {
+				radio.addEventListener('change', function() {
+					showHint = (this.value == "true") ? true : false;
+				});
+			});
+			document.getElementById('hintcount').addEventListener('change', function() {
+				hintCount = parseInt(this.value);
+			});
+			document.getElementById('hintcount').value = hintCount;
 		}
 
 		let cnt = 1;
 		let solvedCnt = 0;
 		let hintCount = 52;
 		let guess = 0;
+		let showHint = true;
 		const guessList = new Map();
 		let currentTooltip = null;
 		let board = new Array(9);
